@@ -22,7 +22,7 @@ public:
 		this->pretBilet = 2000.0;
 		this->varsteJucatori = new int[this->numarJucatori];
 		for (int i = 0; i < this->numarJucatori; i++) {
-			this->varsteJucatori[i] = 16 + i;
+			this->varsteJucatori[i] = 8 + i;
 		}
 	}
 
@@ -33,7 +33,7 @@ public:
 		this->pretBilet = 2000.0;
 		this->varsteJucatori = new int[this->numarJucatori];
 		for (int i = 0; i < this->numarJucatori; i++) {
-			this->varsteJucatori[i] = 18 + i;
+			this->varsteJucatori[i] = 6 + i;
 		}
 	}
 	//constructor 3 clasa 1
@@ -41,7 +41,7 @@ public:
 		this->numarJucatori = numarJucatori;
 		this->pretBilet = pretBilet;
 		this->varsteJucatori = new int[this->numarJucatori];
-		for (int i = 0; i < numarJucatori; i++) {
+		for (int i = 0; i < this->numarJucatori; i++) {
 			this->varsteJucatori[i] = varsteJucatori[i];
 		}
 		this->nume = nume;
@@ -111,6 +111,56 @@ public:
 	~echipaFotbal() {
 		if (this->varsteJucatori != NULL) {
 			delete[]this->varsteJucatori;
+		}
+	}
+
+	//operatori
+	echipaFotbal operator++ () {
+		this->numarJucatori += 2;
+		return *this;
+	}
+	
+	echipaFotbal operator++ (int i) {
+		echipaFotbal temporar = *this;
+		this->numarJucatori += 2;
+		return temporar;
+	}
+	friend istream& operator>> (istream& tastatura, echipaFotbal& e) {
+		cout << "Numar jucatori: "; tastatura >> e.numarJucatori;
+		cout << "Pretul biletului: "; tastatura >> e.pretBilet;
+		cout << "TVA-ul biletului: "; tastatura >> e.TVAbilet;
+		if (e.varsteJucatori != nullptr) {
+			delete[] e.varsteJucatori;
+		}
+		e.varsteJucatori = new int[e.numarJucatori];
+		for (int i = 0; i < e.numarJucatori; i++) {
+			tastatura >> e.varsteJucatori[i];
+		}
+		return tastatura;
+	}
+	
+	friend ostream& operator<< (ostream& consola, echipaFotbal& ech1) {
+		cout << "\nNumarul de jucatori este de " << ech1.numarJucatori << ". " << "\nPretul biletului este de " << ech1.pretBilet << "." <<
+			"\nAnul infiintarii echipei este " << ech1.anInfiintareEchipa << "." << "\nTVA-ul biletului este de " << ech1.TVAbilet << "%." <<
+			"\nVarstele jucatorilor sunt: "; 
+		for (int i = 0; i < ech1.numarJucatori; i++) {
+			cout << ech1.varsteJucatori[i] << "\n ";
+		}
+		cout << ech1.varsteJucatori[ech1.numarJucatori] << endl;
+		return consola;
+	}
+
+	void operator=(const echipaFotbal& e) {
+		this->nume = e.nume;
+		this->numarJucatori = e.numarJucatori;
+		this->TVAbilet = e.TVAbilet;
+
+		if (this->varsteJucatori != NULL) {
+			delete[] this->varsteJucatori;
+		}
+		this->varsteJucatori = new int[e.numarJucatori];
+		for (int i = 0; i < e.numarJucatori; i++) {
+		this->varsteJucatori[i] = e.varsteJucatori[i];
 		}
 	}
 
@@ -262,11 +312,64 @@ public:
 				this->istoricNumerePurtate = NULL; 
 			}
 		}
+		//operatori classa 2
+		void operator=(const jucator& j) {
+			this->nume = j.nume;
+			this->echipa = j.echipa;
+			this->numarTricouriPurtate = j.numarTricouriPurtate;
+			this->aniContract = j.aniContract;
+			
+			if (istoricNumerePurtate != NULL) {
+				delete[]this-> istoricNumerePurtate;
+			}
+			this->istoricNumerePurtate = new int[j.numarTricouriPurtate];
+			for (int i = 0; i < j.numarTricouriPurtate; i++) {
+				this->istoricNumerePurtate[i] = j.istoricNumerePurtate[i]; 
+			}
+		}
+
+		friend istream& operator>> (istream& tastatura, jucator& j) {
+			cout << "\nNume: "; tastatura >> j.nume;
+			cout << "\nEchipa: "; tastatura >> j.echipa;
+			cout << "\nNumarul tricourilor purtate într-un sezon este de: "; tastatura >> j.numarTricouriPurtate;
+			cout << "\nNumar anilor valabilitatii contractului este de: "; tastatura >> j.aniContract;
+			cout << "\nSalariul este: "; tastatura >> j.salariu; 
+			cout << "\nIstoricul numerelor puratate este: ";
+			if (j.istoricNumerePurtate != NULL) {
+				delete[] j.istoricNumerePurtate;
+			}
+			j.istoricNumerePurtate = new int[j.numarTricouriPurtate];
+			for (int i = 0; i < j.numarTricouriPurtate; i++) {
+				tastatura >> j.istoricNumerePurtate[i];
+			}
+			return tastatura;
+		}
+
+		friend ostream& operator<< (ostream& consola, jucator& j2) {
+			cout << "\nNume: " << j2.nume << "\nEchipa: " << j2.echipa << "\NNumar tricouri purtate: " << j2.numarTricouriPurtate << "\nAni contract " <<
+				j2.aniContract << "\nAnul nasterii: " << j2.anulNasterii << "\nIstoric numere purtate: ";
+				for (int i = 0; i < j2.numarTricouriPurtate; i++) {
+					cout << j2.istoricNumerePurtate[i] << "\n";
+				}
+				cout << j2.istoricNumerePurtate[j2.numarTricouriPurtate];
+			return consola;
+		}
+
+		bool operator< (jucator J) {
+			return this->aniContract < J.aniContract;
+		}
+
+		jucator operator++ (int i) {
+		jucator temporar2 = *this;
+		this->salariu += 10.000;
+		return temporar2;
+
+		}
 
 		void afisare() {
-			cout << "Numele jucatorului este " << nume << ". Echipa pentru care joaca este " << echipa << "." << endl << nume << " are un salariu de " <<
+			cout << "\nNumele jucatorului este " << nume << ". \nEchipa pentru care joaca este " << echipa << "." << endl << nume<< " are un salariu de " <<
 				salariu << " euro. " << endl << "Anul in care s-a nascut este " << anulNasterii << ". " << endl << "Contractul cu echipa poate fi de maxim "
-				<< aniContract << " ani." << endl << "A purtat " << numarTricouriPurtate << " tricouri reprezentative si a avut numerele ";
+				<< aniContract << " ani." << endl << "A purtat " << numarTricouriPurtate <<  " tricouri reprezentative si a avut numerele ";
 			for (int i = 0; i < numarTricouriPurtate; i++) {
 				cout << this->istoricNumerePurtate[i] << endl;
 
@@ -290,7 +393,7 @@ public:
 
 	//funcții prietena clasa 2
 	void functie3(const jucator& nume) {
-		cout << "Jucatorul este pe locul 1 in clasament." << endl;
+		cout << "\nJucatorul este pe locul 1 in clasament." << endl;
 	}
 	void functie4(const jucator& pretBilet) {
 		cout << "Pretul biletului este de neratat." << endl;
@@ -394,12 +497,70 @@ public:
 		}
 
 		//descructor clasa 3
-		~stadion() {
-			if (locuriPeluza != NULL) {
+		/*~stadion() {
+			if (locuriPeluza != nullptr) {
 				delete[] this->locuriPeluza;
-				this->locuriPeluza = NULL;
+			}
+		}*/
+		//operatori
+
+		void operator=(const stadion& s) {
+			if (this != &s) {
+				this->nume = s.nume;
+				this->numarLocuriTotal = s.numarLocuriTotal;
+				this->numarPeluze = s.numarPeluze;
+				this->TVApretBilet = s.TVApretBilet;
+				if (this->locuriPeluza != nullptr) {
+					delete[] this->locuriPeluza;
+					this->locuriPeluza = nullptr;
+				}
+				this->locuriPeluza = new int[s.numarPeluze];
+				for (int i = 0; i < s.numarPeluze; i++) {
+					this->locuriPeluza[i] = s.locuriPeluza[i];
+				}
 			}
 		}
+
+		friend istream& operator>> (istream& tastatura, stadion& s) {
+			cout << "Nume:"; tastatura >> s.nume;
+			cout << "Numar locuri in total: "; tastatura >> s.numarLocuriTotal;
+			cout << "Numar peluze: "; tastatura >> s.numarPeluze;
+			if (s.locuriPeluza != nullptr) {
+				delete[] s.locuriPeluza;
+			}
+			s.locuriPeluza = new int[s.numarLocuriTotal];
+			cout << "Numar locuri peluza: ";
+			for (int i=0 ; i < s.numarLocuriTotal; i++) {
+				tastatura >> s.locuriPeluza[i];
+			}
+			return tastatura;
+		}
+
+		friend ostream& operator<<(ostream& consola, stadion& s) {
+			cout << "Nume: " << s.nume << "Numar locuri in total: " << s.numarLocuriTotal << "Numar peluze: " << s.numarPeluze <<
+				"An constructie stadion: " << s.anConstructie;
+			for (int i = 0; i < s.numarLocuriTotal; i++) {
+				cout << s.locuriPeluza[i];
+			}
+			cout << s.locuriPeluza[s.numarLocuriTotal];
+			return  consola; 
+		}
+
+		stadion operator++ () {
+			this->locuriPeluza += 50;
+			return *this;
+		}
+
+		stadion operator++ (int i) {
+			stadion temporar = *this;
+			this->locuriPeluza += 50;
+			return temporar;
+		}
+		
+		bool operator> (stadion s) {
+			return this->numarPeluze= s.numarPeluze;
+		}
+		
 		void afisare() {
 			cout << "Numele stadionului este " << nume << "." << endl << "Numarul total de locuri este de " << numarLocuriTotal<< " de persoane." << endl <<
 				"Numarul peluzelor este " << numarPeluze;
@@ -428,7 +589,7 @@ public:
 	//initializare atribut static clasa 3
 	int stadion::TVApretBilet = 19;
 
-	//functii prietena clasa 3
+	//functii prietena clasa 3H
 	void functie5(stadion& nume) {
 		cout << nume.getNume() << " este un stadion foarte cunoscut la nivel international." << endl;
 	}
@@ -438,18 +599,18 @@ public:
 
 
 	void main() {
+
 		//apelare obiecte clasa 1
 		int* varste = new int[6];
 		for (int i = 0; i < 6; i++) {
-			varste[i] = 16 + i;
+			varste[i] = 6 + i;
 		}
-
-		echipaFotbal echipa1(11, 3000, varste, "Arsenal");
+		echipaFotbal echipa1(6, 3000, varste, "Arsenal");
 		echipa1.setTVA(20);
 		echipa1.afisare();
 
-		echipa1.setVarsteJucatori(new int[6] {18, 16, 22, 23, 19, 24});
-		echipa1.afisare();
+		//echipa1.setVarsteJucatori(new int[6] {18, 16, 22, 23, 19, 24});
+		//echipa1.afisare();
 
 		echipaFotbal echipa2("Tottenham");
 		echipa2.afisare();
@@ -472,7 +633,32 @@ public:
 		echipa1.getTVAbilet();
 		cout << "Cel mai tanar jucator poate fi de 16 ani." << endl;
 		echipa1.getVarsteJucatori();
-		
+
+		//apelare operatori
+		echipa1 = echipa2;
+		cout << echipa1;
+		cout << echipa2;
+
+		echipa2 = echipa1++;
+		cout << "\n\nNumarul de jucatori mai mici de 18 ani este: " << echipa2.getNumarJucatori();
+		cout << "\nJucatorii noi sunt in numar de: " << echipa1.getNumarJucatori() << endl;
+
+		echipa1 = ++echipa3;
+		cout << "Numar jucaorilor profesionisti:" << echipa1.getNumarJucatori() << endl;
+		cout << "Numar jucatorilor noi: " << echipa3.getNumarJucatori() << endl;
+
+		//vector
+		echipaFotbal vectorEchipa[3];
+
+		for (int i = 0; i < 3; i++) {
+			cin >> vectorEchipa[i];
+		}
+		cout << "Vector Echipa";
+		for (int i = 0; i < 3; i++) {
+			cout << vectorEchipa[i];
+		}
+
+
 		//apelare obiecte clasa 2
 		jucator jucator1;
 		jucator1.afisare();
@@ -488,8 +674,24 @@ public:
 		jucator jucator3("Heung-Min Son");
 		jucator3.afisare();
 
+		//apelare operatori
+		jucator1 = jucator2;
+		cin >> jucator1;
+		cout << jucator2 << endl;
+
+		jucator1 = jucator2++;
+		cout << "\nSalariul este de " << jucator1.getSalariu() << " euro.";
+		cout << "\nSalariul este de " << jucator2.getSalariu() << " lei.";
+
+		if (jucator1 < jucator2) {
+			cout << "\nJucatorul are un mic de ani pe contract.";
+		}
+		else {
+			cout << "\nAl doilea salariu este mai mare";
+		}
+
 		functie3(jucator1); // functia friend
-		functie4(jucator1); 
+		functie4(jucator1);
 
 		jucator1.getNume();
 		jucator1.getEchipa();
@@ -499,7 +701,31 @@ public:
 		jucator1.getNumarTricouriPurtate();
 		jucator1.getSalariu();
 
-		//apelare obiect clasa 3
+		//vector
+		jucator vectorJucator[4];
+		for (int i = 0; i < 4; i++) {
+			cin >> vectorJucator[i];
+		}
+		cout << "Vector Echipa";
+		for (int i = 0; i < 4; i++) {
+			cout << vectorJucator[i];
+		}
+
+		//matrice
+		jucator matriceJucator[2][6];
+		for (int i = 0; i < 2; i++) {
+			for (int j = 6; i < 6; i++) {
+				cin >> matriceJucator[i][j];
+			}
+		}
+		cout << "Matricea Jucator";
+		for (int i = 0; i < 2; i++) {
+			for (int j = 6; i < 6; i++) {
+				cout << matriceJucator[i][j];
+			}
+		}
+
+		//	//apelare obiect clasa 3
 		stadion stadion1;
 		stadion1.afisare();
 
@@ -511,21 +737,44 @@ public:
 			locuriPeluza1[i] = 200 + i;
 		}
 		stadion stadion3("Arsenal", 60704, locuriPeluza1);
-		//stadion3.setTVApretBilet(19);                  
+		//stadion3.setTVApretBilet(18);                  
 		stadion3.afisare();
+
+		stadion1 = stadion2;
+		stadion1.afisare();
+
+		if (stadion1 > stadion2) {
+			cout << "\nStadionul 1 este mai mare.";
+		}
+		else {
+			cout << "Stadionul 2 are mai multe locuri.";
+		}
+
+		stadion1 = ++stadion2;
+		stadion1.afisare();
+		stadion1 = stadion2++;
+		stadion1.afisare();
 
 		functie5(stadion1); // functia friend
 		functie6(stadion1);
 
 		stadion1.getAnConstructie();
 		stadion1.getLocuriPeluza();
-		stadion1.getNumarLocuriTotal()
+		stadion1.getNumarLocuriTotal();
 		stadion1.getNume();
 		stadion1.getTVApretBilet();
 		stadion1.getTVApretBilet();
+
+		//vector
+		/*stadion vectorStadion[5];
+		for (int i = 0; i < 5; i++) {
+			cin >> vectorStadion[i];
+		}
+		cout << "Vector Stadion";
+		for (int i = 0; i < 5; i++) {
+			cout << vectorStadion[i] << endl;
+		}*/
+
+
 	};
-
-	
-	
-
 
